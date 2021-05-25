@@ -1,0 +1,341 @@
+import random
+
+
+class BColors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033{92n'
+    WARNING = '\033[93n'
+    FAIL = '\033[91n'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4n'
+
+
+class Person:
+    def __init__(self, hp, mp, atk, df, magic):
+        self.max_hp = hp
+        self.hp = hp
+        self.max_mp = mp
+        self.mp = mp
+        self.atkL = atk - 10
+        self.atkH = atk + 10
+        self.df = df
+        self.magic = magic
+        self.action = ['ATTACK', 'MAGIC']
+
+    def generate_damage(self):
+        return random.randrange(self.atkL, self.atkH)
+
+    def generate_spell_damage(self, i):
+        mgl = self.magic[i]['dmg'] - 5
+        mgh = self.magic[i]['dmg'] + 5
+        return random.randrange(mgl, mgh)
+
+    def take_damage(self, dmg):
+        self.hp -= dmg
+        if self.hp < 0:
+            self.hp = 0
+        return self.hp
+
+    def get_hp(self):
+        return self.hp
+
+    def get_max_hp(self):
+        return self.max_hp
+
+    def get_mp(self):
+        return self.mp
+
+    def get_max_mp(self):
+        return self.max_mp
+
+    def reduce_mp(self, cost):
+        self.mp -= cost
+
+    def get_spell(self, i):
+        return self.magic[i]['name']
+
+    def get_spell_mp_cost(self, i):
+        return self.magic[i]['cost']
+
+    def chose_action(self):
+        i = 1
+        print('Actions')
+        for item in self.action:
+            print(str(i) + ':', item)
+
+    def choose_magic(self):
+        i = 1
+        for spell in self.magic:
+            print(str(i), ':', spell['name'], str(spell['mp']) + ')')
+            i += 1
+
+
+
+
+'''
+#from main.py. it takes input and  takes damage.
+while running:
+    if player.hp > 0:
+        print(magic[0])
+        print(magic[1])
+        print(magic[2])
+        spell_selection = int(input('Your spell:'))
+        dmg = player.generate_spell_damage(spell_selection)
+        hp_after_damage = player.take_damage(dmg)
+        print('HP left:', hp_after_damage)
+    else:
+        print("YOU'RE DEAD")
+        running = False
+
+'''
+
+
+'''
+
+while running:
+    global attack_damage
+
+    print('===================================================================')
+    if enemy.hp > 0:
+        player.choose_action()
+        choice_action = int(input('Please Chose your Course of Action:'))
+        choice_action -= 1
+        if choice_action == 0:
+            attack_damage = player.generate_damage()
+            print('Attack DAMAGE', attack_damage)
+
+        else:
+            player.choose_magic()
+            choose_magic = int(input('Please Choose MAGIC SPELL:'))
+            choose_magic -= 1
+            attack_damage = player.generate_spell_damage(choose_magic)
+
+        enemy_hp = enemy.take_damage(attack_damage)
+        print("Enemy's Health Remaining", enemy_hp)
+    else:
+        print(BColors.Bold + BColors.Red + "YOU'VE DEFEATED THE ENEMY." + BColors.ResetAll)
+        running = False
+
+
+'''
+
+'''
+while running:
+    global player_hp
+
+    print('===================================================================')
+    player.show_action()
+    choice = int(input('Make a choice:'))
+    index = choice - 1
+
+    if index == 0:
+        damage_done = player.generate_damage()
+        enemy.take_damage(damage_done)
+        print('You attacked for', damage_done, 'points of damage. Enemy health is:',
+              enemy.get_hp())
+    else:
+        print(player.show_magic())
+        spell_choice = int(input('Choose your spell:'))
+        spell_index = spell_choice - 1
+        spell_damage = player.generate_spell_damage(spell_index)
+        enemy.take_damage(spell_damage)
+        print('You attacked for', spell_damage, 'points of damage. Enemy health is:',
+              enemy.get_hp())
+
+    enemy_choice = enemy.enemy_random_action() + 1
+    print('ec', enemy_choice)
+
+    if enemy_choice == 1:
+        enemy_damage = enemy.generate_damage()
+        player.take_damage(enemy_damage)
+        player_hp = player.get_hp()
+        print('Enemy attacked for', enemy_damage, 'points of damage. Your health is:',
+              player.get_hp())
+    else:
+        enemy_spell_choice = enemy.enemy_random_action()
+        print('es', enemy_spell_choice)
+        enemy_spell_damage = enemy.generate_spell_damage(enemy_spell_choice)
+        player.take_damage(enemy_spell_damage)
+        player_hp = player.get_hp()
+        print('Enemy attacked you for', enemy_spell_damage, 'points. your HP is:',
+              player.get_hp())
+
+    if player_hp > 0:
+        pass
+    else:
+        print(BColors.Bold + BColors.Red +
+              '!!!YOU ARE DEAD!!!\nBETTER LUCK NEXT TIME'
+              + BColors.ResetAll)
+
+        running = False
+
+    enemy_hp = enemy.get_hp()
+
+    if enemy_hp > 0:
+        pass
+    else:
+        print(BColors.BackgroundWhite + BColors.Bold + BColors.Red +
+              'YOU HAVE SUCCESSFULLY DEFEATED YOUR ENEMY.' +
+              BColors.ResetAll)
+        corpse_check = input('Do you want to search enemy\'s corpse.(y/n)')
+
+        if corpse_check == 'y':
+            print('Found a healing spell.\nDo you want to use it?(y/n)\n'
+                  'You cant use it later. Your health is', player.get_hp())
+            spell_use = input()
+
+            if spell_use == 'y':
+                player_hp = player.healing_spell_use()
+                print('Your health is:', player_hp)
+            else:
+                pass
+
+        else:
+            pass
+
+'''
+
+'''
+while running:
+    global spell_cost, player_current_mp, VI
+
+    print('===================================================================')
+    player.show_action()
+    player_action_index = int(input('MAKE YOUR DECISION:')) - 1
+
+    if player_action_index == 0:
+        player_damage = player.generate_damage()
+        enemy_HP = enemy.take_damage(player_damage)
+
+        print(BColors.Green + "You've attacked for:" + str(player_damage) + "\nEnemy's HP:" +
+              str(enemy_HP) + '/' + str(enemy.get_max_hp()) +
+              BColors.ResetAll +'\n\n')
+        VI = '1'
+
+    elif player_action_index == 1:
+        print('You currently have:', player.get_mp(), 'MPs.')
+        print(player.show_magic())
+
+        magic_choice = int(input('Please choose your magic:'))
+        magic_choice_index = magic_choice - 1
+        spell_name = player.magic[magic_choice_index]['Name']
+        spell_cost = player.magic[magic_choice_index]['Cost']
+        print('Spell Name:', spell_name, '.\nSpell Cost:', spell_cost)
+
+        player_current_mp = player.get_mp()
+
+        VI = '1'
+
+        if player_current_mp > spell_cost:
+            spell_damage = player.generate_spell_damage(magic_choice_index)
+            enemy_HP = enemy.take_damage(spell_damage)
+            print(BColors.Green +
+                  spell_name + ' spell deals for ' + str(spell_damage) +
+                  " points of damage.\nEnemy's HP:" + str(enemy_HP) + '/' + str(enemy.get_max_hp()) +
+                  BColors.ResetAll + '\n\n')
+            player_current_mp = player.reduce_mp(spell_cost)
+        else:
+            print(BColors.Yellow +
+                  'you don\'t have enough magic points.' +
+                  BColors.ResetAll)
+            continue
+    else:
+        print(BColors.BackgroundRed + BColors.White + BColors.Bold +
+              BColors.Underlined +
+              'INVALID INPUT' +
+              BColors.ResetAll)
+        VI = 'INVALID'
+
+    if VI == 'INVALID':
+        continue
+    else:
+        enemy_choice = 1
+        enemy_damage = enemy.generate_damage()
+        player_hp = player.take_damage(enemy_damage)
+
+        print(BColors.Blue +
+              "Enemy attacked for:" + str(enemy_damage) + "\nYour HP:" + str(player_hp) + '/' +
+              str(player.get_max_hp()) +
+              BColors.ResetAll)
+
+    if enemy.get_hp() == 0:
+        print(BColors.Green + '!!!You WON!!!' +
+              BColors.ResetAll)
+    elif player.get_hp() == 0:
+        print(BColors.Red + 'Your\' enemy defeated you' +
+              BColors.ResetAll)
+'''
+
+'''
+while running:
+    global spell_cost, player_current_mp, VI
+
+    print('===================================================================')
+    player.show_action()
+    player_action_index = int(input('MAKE YOUR DECISION:')) - 1
+
+    if player_action_index == 0:
+        player_damage = player.generate_damage()
+        enemy_HP = enemy.take_damage(player_damage)
+
+        print(BColors.Green + "You've attacked for:" + str(player_damage) + "\nEnemy's HP:" +
+              str(enemy_HP) + '/' + str(enemy.get_max_hp()) +
+              BColors.ResetAll +'\n\n')
+        VI = '1'
+
+    elif player_action_index == 1:
+        print('You currently have:', player.get_mp(), 'MPs.')
+        print(player.show_magic())
+
+        magic_choice = int(input('Please choose your magic:'))
+        magic_choice_index = magic_choice - 1
+        spell_name = player.magic[magic_choice_index]['Name']
+        spell_cost = player.magic[magic_choice_index]['Cost']
+        print('Spell Name:', spell_name, '.\nSpell Cost:', spell_cost)
+
+        player_current_mp = player.get_mp()
+
+        VI = '1'
+
+        if player_current_mp > spell_cost:
+            spell_damage = player.generate_spell_damage(magic_choice_index)
+            enemy_HP = enemy.take_damage(spell_damage)
+            print(BColors.Green +
+                  spell_name + ' spell deals for ' + str(spell_damage) +
+                  " points of damage.\nEnemy's HP:" + str(enemy_HP) + '/' + str(enemy.get_max_hp()) +
+                  BColors.ResetAll + '\n\n')
+            player_current_mp = player.reduce_mp(spell_cost)
+        else:
+            print(BColors.Yellow +
+                  'you don\'t have enough magic points.' +
+                  BColors.ResetAll)
+            continue
+    else:
+        print(BColors.BackgroundRed + BColors.White + BColors.Bold +
+              BColors.Underlined +
+              'INVALID INPUT' +
+              BColors.ResetAll)
+        VI = 'INVALID'
+
+    if VI == 'INVALID':
+        continue
+    else:
+        enemy_choice = 1
+        enemy_damage = enemy.generate_damage()
+        player_hp = player.take_damage(enemy_damage)
+
+        print(BColors.Blue +
+              "Enemy attacked for:" + str(enemy_damage) + "\nYour HP:" + str(player_hp) + '/' +
+              str(player.get_max_hp()) +
+              BColors.ResetAll)
+
+    if enemy.get_hp() == 0:
+        print(BColors.Green + '!!!You WON!!!' +
+              BColors.ResetAll)
+    elif player.get_hp() == 0:
+        print(BColors.Red + 'Your\' enemy defeated you' +
+              BColors.ResetAll)
+
+'''
